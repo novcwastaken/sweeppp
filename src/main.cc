@@ -3,15 +3,26 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_video.h>
 
+#include "backend/board.hh"
+#include "backend/board_config.hh"
+#include "game_manager.hh"
+#include "rendering/board_renderer.hh"
+
 struct SDLState {
     SDL_Window* window;
     SDL_Renderer* renderer;
 };
 
 void cleanup(SDLState& sdl_state);
+void set_window_size_from_board(SDL_Window* window, Sweeppp::BoardConfig board_config);
 
 int main(int argc, char* argv[]) {
     SDLState sdl_state {};
+
+    Sweeppp::GameManager game_manager {};
+    const Sweeppp::DefaultBoardConfigs DEFAULT_BOARD_CONFIGS;
+
+    game_manager.start_game(DEFAULT_BOARD_CONFIGS.beginner);
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error initializing SDL3!", nullptr);
@@ -21,7 +32,7 @@ int main(int argc, char* argv[]) {
     // Window creation
     int windowWidth = 800;
     int windowHeight = 600;
-    sdl_state.window = SDL_CreateWindow("Sweep++", windowWidth, windowHeight, SDL_WINDOW_RESIZABLE);
+    sdl_state.window = SDL_CreateWindow("Sweep++", windowWidth, windowHeight, 0);
 
     if (!sdl_state.window) {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error creating window!", nullptr);
@@ -49,8 +60,6 @@ int main(int argc, char* argv[]) {
         .h = test_button_h
     };
 
-
-
     // Main loop
     bool running = true;
     while (running) {
@@ -61,11 +70,11 @@ int main(int argc, char* argv[]) {
                     if (event.button.button == SDL_BUTTON_LEFT) std::cout << "@@@ Mouse left pressed" << std::endl;
                 }
 
-                case SDL_EVENT_WINDOW_RESIZED: {
-                    windowWidth = event.window.data1;
-                    windowHeight = event.window.data2;
-                    break;
-                }
+                // case SDL_EVENT_WINDOW_RESIZED: {
+                //     windowWidth = event.window.data1;
+                //     windowHeight = event.window.data2;
+                //     break;
+                // }
 
                 case SDL_EVENT_QUIT: {
                     running = false;
@@ -74,19 +83,27 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        // Drawing
-        SDL_SetRenderDrawColor(sdl_state.renderer, 20, 20, 20, 255);
-        SDL_RenderClear(sdl_state.renderer);
+//         // Drawing
+//         SDL_SetRenderDrawColor(sdl_state.renderer, 20, 20, 20, 255);
+//         SDL_RenderClear(sdl_state.renderer);
+//
+//         // -- Rectangle
+//         SDL_SetRenderDrawColor(sdl_state.renderer, 200, 200, 200, 255);
+//         SDL_RenderFillRect(sdl_state.renderer, &test_button);
+//
+//         // -- Lines
+//         SDL_SetRenderDrawColor(sdl_state.renderer, 255, 0, 0, 255);
+//         SDL_RenderLine(sdl_state.renderer, (float)windowWidth/2, 0, (float)windowWidth/2, windowHeight);
+//         SDL_SetRenderDrawColor(sdl_state.renderer, 255, 0, 0, 255);
+//         SDL_RenderLine(sdl_state.renderer, 0, (float)windowHeight/2, windowWidth, (float)windowHeight/2);
 
-        // -- Rectangle
-        SDL_SetRenderDrawColor(sdl_state.renderer, 200, 200, 200, 255);
-        SDL_RenderFillRect(sdl_state.renderer, &test_button);
+        game_manager.board_renderer.render_board(
+            sdl_state.renderer,
+            game_manager.current_board.value().board_config.size_x,
+            game_manager.current_board.value().board_config.size_y
+        );
 
-        // -- Lines
-        SDL_SetRenderDrawColor(sdl_state.renderer, 255, 0, 0, 255);
-        SDL_RenderLine(sdl_state.renderer, (float)windowWidth/2, 0, (float)windowWidth/2, windowHeight);
-        SDL_SetRenderDrawColor(sdl_state.renderer, 255, 0, 0, 255);
-        SDL_RenderLine(sdl_state.renderer, 0, (float)windowHeight/2, windowWidth, (float)windowHeight/2);
+        set_window_size_from_board(sdl_state.window, game_manager.current_board.value().board_config);
 
         // Present
         SDL_RenderPresent(sdl_state.renderer);
@@ -102,4 +119,9 @@ void cleanup(SDLState& sdl_state) {
     SDL_DestroyWindow(sdl_state.window);
 
     SDL_Quit();
+}
+
+void set_window_size_from_board(SDL_Window* window, Sweeppp::BoardConfig board_config) {
+    int cell_size = 50;
+    SDL_SetWindowSize(window, board_config.size_x * cell_size, board_config.size_y * cell_size);
 }
