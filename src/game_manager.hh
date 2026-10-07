@@ -5,15 +5,13 @@
 #include "rendering/board_renderer.hh"
 #include "backend/board_config.hh"
 
-#include <optional>
-
 namespace Sweeppp {
     class GameManager {
         public:
             GameManager();
 
             BoardRenderer board_renderer;
-            std::optional<Board> current_board;
+            Board current_board;
 
             void start_game(BoardConfig board_config);
     };

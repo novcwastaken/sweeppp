@@ -3,7 +3,6 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_video.h>
 
-#include "backend/board.hh"
 #include "backend/board_config.hh"
 #include "game_manager.hh"
 #include "rendering/board_renderer.hh"
@@ -20,9 +19,10 @@ int main(int argc, char* argv[]) {
     SDLState sdl_state {};
 
     Sweeppp::GameManager game_manager {};
-    const Sweeppp::DefaultBoardConfigs DEFAULT_BOARD_CONFIGS;
+    const Sweeppp::StandardBoardConfigs DEFAULT_BOARD_CONFIGS;
 
     game_manager.start_game(DEFAULT_BOARD_CONFIGS.beginner);
+    //game_manager.start_game(Sweeppp::BoardConfig { .size_x = 2, .size_y = 2, .mine_count = 1} );
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error initializing SDL3!", nullptr);
@@ -67,7 +67,9 @@ int main(int argc, char* argv[]) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-                    if (event.button.button == SDL_BUTTON_LEFT) std::cout << "@@@ Mouse left pressed" << std::endl;
+                    //if (event.button.button == SDL_BUTTON_LEFT) std::cout << "@@@ Mouse left pressed" << std::endl;
+                    std::cout << event.button.button << std::endl;
+                    break;
                 }
 
                 // case SDL_EVENT_WINDOW_RESIZED: {
@@ -99,11 +101,11 @@ int main(int argc, char* argv[]) {
 
         game_manager.board_renderer.render_board(
             sdl_state.renderer,
-            game_manager.current_board.value().board_config.size_x,
-            game_manager.current_board.value().board_config.size_y
+            game_manager.current_board.board_config.size_x,
+            game_manager.current_board.board_config.size_y
         );
 
-        set_window_size_from_board(sdl_state.window, game_manager.current_board.value().board_config);
+        set_window_size_from_board(sdl_state.window, game_manager.current_board.board_config);
 
         // Present
         SDL_RenderPresent(sdl_state.renderer);

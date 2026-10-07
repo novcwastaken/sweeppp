@@ -6,9 +6,11 @@ namespace Sweeppp {
         int size_x, size_y, mine_count;
     };
 
-    struct DefaultBoardConfigs {
+    struct StandardBoardConfigs {
         public:
             BoardConfig beginner = BoardConfig { .size_x = 9, .size_y = 9, .mine_count = 10 };
+            BoardConfig intermediate = BoardConfig { .size_x = 16, .size_y = 16, .mine_count = 40 };
+            BoardConfig expert = BoardConfig { .size_x = 30, .size_y = 16, .mine_count = 99 };
     };
 }
 

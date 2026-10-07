@@ -8,6 +8,6 @@ namespace Sweeppp {
     }
 
     void GameManager::start_game(BoardConfig board_config) {
-        current_board->board_config = board_config;
+        current_board.board_config = board_config;
     }
 }
