@@ -7,6 +7,8 @@ namespace Sweeppp {
     class BoardRenderer {
         public:
             BoardRenderer();
+
+            int cell_size = 32;
             void render_board(SDL_Renderer* renderer, int size_x, int size_y);
     };
 }

@@ -10,8 +10,8 @@ namespace Sweeppp {
         SDL_FRect rect_cell {
             .x = 0,
             .y = 0,
-            .w = 50,
-            .h = 50
+            .w = (float)cell_size,
+            .h = (float)cell_size
         };
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);

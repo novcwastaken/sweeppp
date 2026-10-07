@@ -1,11 +1,14 @@
 #include <iostream>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <SDL3/SDL_video.h>
+#include <SDL3_image/SDL_image.h>
 
+#include "SDL3/SDL_render.h"
+#include "SDL3/SDL_surface.h"
 #include "backend/board_config.hh"
 #include "game_manager.hh"
 #include "rendering/board_renderer.hh"
+#include "rendering/texture_atlas.hh"
 
 struct SDLState {
     SDL_Window* window;
@@ -13,16 +16,10 @@ struct SDLState {
 };
 
 void cleanup(SDLState& sdl_state);
-void set_window_size_from_board(SDL_Window* window, Sweeppp::BoardConfig board_config);
+void set_window_size_from_board(SDL_Window* window, int cell_size, Sweeppp::BoardConfig board_config);
 
 int main(int argc, char* argv[]) {
     SDLState sdl_state {};
-
-    Sweeppp::GameManager game_manager {};
-    const Sweeppp::StandardBoardConfigs DEFAULT_BOARD_CONFIGS;
-
-    game_manager.start_game(DEFAULT_BOARD_CONFIGS.beginner);
-    //game_manager.start_game(Sweeppp::BoardConfig { .size_x = 2, .size_y = 2, .mine_count = 1} );
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Error initializing SDL3!", nullptr);
@@ -50,15 +47,15 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    float test_button_w = 200.0f;
-    float test_button_h = 100.0f;
+    SDL_SetDefaultTextureScaleMode(sdl_state.renderer, SDL_SCALEMODE_PIXELART);
 
-    SDL_FRect test_button {
-        .x = (float)windowWidth/2 - test_button_w/2,
-        .y = (float)windowHeight/2 - test_button_h/2,
-        .w = test_button_w,
-        .h = test_button_h
-    };
+    // Sweeppp initialization
+    Sweeppp::GameManager game_manager {};
+    const Sweeppp::StandardBoardConfigs STANDARD_BOARD_CONFIGS;
+
+    Sweeppp::TextureAtlas texture_atlas = Sweeppp::TextureAtlas(16, sdl_state.renderer, "assets/texture_atlas.png");
+
+    game_manager.start_game(STANDARD_BOARD_CONFIGS.beginner);
 
     // Main loop
     bool running = true;
@@ -72,12 +69,6 @@ int main(int argc, char* argv[]) {
                     break;
                 }
 
-                // case SDL_EVENT_WINDOW_RESIZED: {
-                //     windowWidth = event.window.data1;
-                //     windowHeight = event.window.data2;
-                //     break;
-                // }
-
                 case SDL_EVENT_QUIT: {
                     running = false;
                     break;
@@ -85,31 +76,23 @@ int main(int argc, char* argv[]) {
             }
         }
 
-//         // Drawing
-//         SDL_SetRenderDrawColor(sdl_state.renderer, 20, 20, 20, 255);
-//         SDL_RenderClear(sdl_state.renderer);
-//
-//         // -- Rectangle
-//         SDL_SetRenderDrawColor(sdl_state.renderer, 200, 200, 200, 255);
-//         SDL_RenderFillRect(sdl_state.renderer, &test_button);
-//
-//         // -- Lines
-//         SDL_SetRenderDrawColor(sdl_state.renderer, 255, 0, 0, 255);
-//         SDL_RenderLine(sdl_state.renderer, (float)windowWidth/2, 0, (float)windowWidth/2, windowHeight);
-//         SDL_SetRenderDrawColor(sdl_state.renderer, 255, 0, 0, 255);
-//         SDL_RenderLine(sdl_state.renderer, 0, (float)windowHeight/2, windowWidth, (float)windowHeight/2);
-
         game_manager.board_renderer.render_board(
             sdl_state.renderer,
             game_manager.current_board.board_config.size_x,
             game_manager.current_board.board_config.size_y
         );
 
-        set_window_size_from_board(sdl_state.window, game_manager.current_board.board_config);
+        set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.current_board.board_config);
+
+        // Testing the atlas rendering
+        SDL_FRect destination { .x = 0, .y = 0, .w = (float)game_manager.board_renderer.cell_size, .h = (float)game_manager.board_renderer.cell_size };
+        texture_atlas.render_texture(Sweeppp::Vector2(1, 0), destination);
 
         // Present
         SDL_RenderPresent(sdl_state.renderer);
     }
+
+    texture_atlas.destroy_atlas_texture();
 
     // Window cremation
     cleanup(sdl_state);
@@ -123,7 +106,6 @@ void cleanup(SDLState& sdl_state) {
     SDL_Quit();
 }
 
-void set_window_size_from_board(SDL_Window* window, Sweeppp::BoardConfig board_config) {
-    int cell_size = 50;
+void set_window_size_from_board(SDL_Window* window, int cell_size, Sweeppp::BoardConfig board_config) {
     SDL_SetWindowSize(window, board_config.size_x * cell_size, board_config.size_y * cell_size);
 }
