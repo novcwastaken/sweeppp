@@ -3,10 +3,11 @@
 
 #include <SDL3_image/SDL_image.h>
 #include <string>
-#include <map>
 #include "backend/util.hh"
 
 namespace Sweeppp {
+    enum class TextureType;
+
     class TextureAtlas {
         public:
             /// Holds the texture atlas.
@@ -28,8 +29,6 @@ namespace Sweeppp {
 
             /// Destoys the atlas texture.
             void destroy_atlas_texture();
-
-            std::map<std::string, Vector2> named_textures;
 
         private:
             SDL_Renderer* renderer;

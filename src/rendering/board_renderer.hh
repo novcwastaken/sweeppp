@@ -1,7 +1,11 @@
 #ifndef BOARD_RENDERER_HH
 #define BOARD_RENDERER_HH
 
+#include "backend/board.hh"
+#include "rendering/cell_button.hh"
+#include "rendering/texture_atlas.hh"
 #include <SDL3/SDL_render.h>
+#include <vector>
 
 namespace Sweeppp {
     class BoardRenderer {
@@ -9,7 +13,11 @@ namespace Sweeppp {
             BoardRenderer();
 
             int cell_size = 32;
-            void render_board(SDL_Renderer* renderer, int size_x, int size_y);
+            std::vector<CellButton> cell_buttons;
+            Board* board;
+
+            void initialize_cell_buttons();
+            void render_board(SDL_Renderer* renderer, TextureAtlas* atlas);
     };
 }
 

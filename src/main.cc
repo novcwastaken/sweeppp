@@ -2,12 +2,13 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
-#include <map>
+#include <mmintrin.h>
 
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_surface.h"
 #include "backend/board_config.hh"
 #include "backend/util.hh"
+#include "rendering/texture_shorthands.hh"
 #include "game_manager.hh"
 #include "rendering/board_renderer.hh"
 #include "rendering/texture_atlas.hh"
@@ -51,30 +52,27 @@ int main(int argc, char* argv[]) {
 
     SDL_SetDefaultTextureScaleMode(sdl_state.renderer, SDL_SCALEMODE_PIXELART);
 
+    std::cout << "@@@ sdl init done" << std::endl;
+
     // Sweeppp initialization
     Sweeppp::GameManager game_manager {};
+    std::cout << "@@@ game manager init done" << std::endl;
     const Sweeppp::StandardBoardConfigs STANDARD_BOARD_CONFIGS;
+    std::cout << "@@@ board config instancing done" << std::endl;
 
+    // TODO: move texture atlas to game manager
     Sweeppp::TextureAtlas texture_atlas = Sweeppp::TextureAtlas(16, sdl_state.renderer, "assets/texture_atlas.png");
-    texture_atlas.named_textures = std::map<std::string, Sweeppp::Vector2> {
-        { "cell_empty", Sweeppp::Vector2(0, 0) },
-        { "cell_cover", Sweeppp::Vector2(1, 0) },
-        { "mine", Sweeppp::Vector2(2, 0) },
-        { "flag", Sweeppp::Vector2(3, 0) },
-        { "flag_wrong", Sweeppp::Vector2(4, 0) },
-        { "mine_revealed_bg", Sweeppp::Vector2(5, 0) },
+    std::cout << "@@@ tex atlas init done" << std::endl;
 
-        { "1", Sweeppp::Vector2(1, 0) },
-        { "2", Sweeppp::Vector2(1, 1) },
-        { "3", Sweeppp::Vector2(1, 2) },
-        { "4", Sweeppp::Vector2(1, 3) },
-        { "5", Sweeppp::Vector2(1, 4) },
-        { "6", Sweeppp::Vector2(1, 5) },
-        { "7", Sweeppp::Vector2(1, 6) },
-        { "8", Sweeppp::Vector2(1, 7) }
-    };
 
     game_manager.start_game(STANDARD_BOARD_CONFIGS.beginner);
+    std::cout << "@@@ game start called" << std::endl;
+    game_manager.board_renderer.initialize_cell_buttons();
+    std::cout << "@@@ cell buttons initialized" << std::endl;
+    set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.current_board.board_config);
+    std::cout << "@@@ window size set" << std::endl;
+
+    std::cout << "@@@ sweeppp init done" << std::endl;
 
     // Main loop
     bool running = true;
@@ -95,17 +93,11 @@ int main(int argc, char* argv[]) {
             }
         }
 
+        // Rendering
         game_manager.board_renderer.render_board(
             sdl_state.renderer,
-            game_manager.current_board.board_config.size_x,
-            game_manager.current_board.board_config.size_y
+            &texture_atlas
         );
-
-        set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.current_board.board_config);
-
-        // Testing the atlas rendering
-        SDL_FRect destination { .x = 0, .y = 0, .w = (float)game_manager.board_renderer.cell_size, .h = (float)game_manager.board_renderer.cell_size };
-        texture_atlas.render_texture(texture_atlas.named_textures["cell_cover"], destination);
 
         // Present
         SDL_RenderPresent(sdl_state.renderer);
