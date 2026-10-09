@@ -52,27 +52,17 @@ int main(int argc, char* argv[]) {
 
     SDL_SetDefaultTextureScaleMode(sdl_state.renderer, SDL_SCALEMODE_PIXELART);
 
-    std::cout << "@@@ sdl init done" << std::endl;
-
     // Sweeppp initialization
     Sweeppp::GameManager game_manager {};
-    std::cout << "@@@ game manager init done" << std::endl;
     const Sweeppp::StandardBoardConfigs STANDARD_BOARD_CONFIGS;
-    std::cout << "@@@ board config instancing done" << std::endl;
 
     // TODO: move texture atlas to game manager
     Sweeppp::TextureAtlas texture_atlas = Sweeppp::TextureAtlas(16, sdl_state.renderer, "assets/texture_atlas.png");
-    std::cout << "@@@ tex atlas init done" << std::endl;
-
 
     game_manager.start_game(STANDARD_BOARD_CONFIGS.beginner);
-    std::cout << "@@@ game start called" << std::endl;
     game_manager.board_renderer.initialize_cell_buttons();
-    std::cout << "@@@ cell buttons initialized" << std::endl;
-    set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.current_board.board_config);
-    std::cout << "@@@ window size set" << std::endl;
 
-    std::cout << "@@@ sweeppp init done" << std::endl;
+    set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.current_board.board_config);
 
     // Main loop
     bool running = true;
