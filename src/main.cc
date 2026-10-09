@@ -71,8 +71,12 @@ int main(int argc, char* argv[]) {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-                    //if (event.button.button == SDL_BUTTON_LEFT) std::cout << "@@@ Mouse left pressed" << std::endl;
-                    std::cout << event.button.button << std::endl;
+                    game_manager.handle_mouse_down_event(event);
+                    break;
+                }
+
+                case SDL_EVENT_MOUSE_BUTTON_UP: {
+                    game_manager.handle_mouse_up_event(event);
                     break;
                 }
 

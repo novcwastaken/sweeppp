@@ -4,14 +4,19 @@
 #include "backend/util.hh"
 namespace Sweeppp {
     class Cell {
-        bool is_mine;
-        bool is_revealed;
-        bool is_flagged;
-        int adjacent_mine_count;
+        private:
+            bool is_flagged = false;
 
-        Vector2 coordinates;
+        public:
+            Cell();
 
-        void reveal();
+            bool is_revealed = false;
+            bool is_mine = false;
+            int adjacent_mine_count = 0;
+
+            Vector2 coordinates = Vector2(-1, -1);
+
+            void reveal();
     };
 }
 

@@ -3,7 +3,7 @@
 
 namespace Sweeppp {
     CellButton::CellButton() {
-
+        //cell = {};
     }
 
     void CellButton::render(SDL_Renderer* renderer) {
