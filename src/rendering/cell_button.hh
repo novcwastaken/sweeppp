@@ -13,7 +13,10 @@ namespace Sweeppp {
             Cell* cell;
             SDL_FRect screen_rect;
 
-            void render(SDL_Renderer* renderer);
+            bool is_held = false;
+
+            void set_cover_texture();
+            void set_held_texture();
     };
 }
 

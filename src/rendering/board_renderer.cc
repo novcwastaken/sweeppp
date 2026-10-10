@@ -34,7 +34,12 @@ namespace Sweeppp {
                 atlas->render_texture(CELL_EMPTY, destination);
             }
             else {
-                atlas->render_texture(CELL_COVER, destination);
+                if (cell_buttons[i].is_held) {
+                    // The cell button is being held down
+                    atlas->render_texture(CELL_EMPTY, destination);
+                } else {
+                    atlas->render_texture(CELL_COVER, destination);
+                }
             }
         }
     }

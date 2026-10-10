@@ -6,6 +6,8 @@
 #include <iostream>
 
 namespace Sweeppp {
+    int held_cell_button_index = -1;
+
     GameManager::GameManager() {
         board_renderer = {};
         current_board = {};
@@ -24,17 +26,42 @@ namespace Sweeppp {
     }
 
     void GameManager::handle_mouse_down_event(SDL_Event& event) {
-        if (event.button.button != SDL_BUTTON_LEFT) return;
+        size_t cell_index = -1;
 
+        cell_index = board_coords_to_index(Vector2(std::floor(event.button.x / board_renderer.cell_size), std::floor(event.button.y / board_renderer.cell_size)), &(current_board.board_config));        if (cell_index == -1) return; // Cell not found
+
+
+        switch (event.button.button) {
+            case SDL_BUTTON_LEFT: {
+                // Cell is already revealed, there is nothing to do
+                if (board_renderer.cell_buttons[cell_index].cell->is_revealed) return;
+
+                held_cell_button_index = cell_index;
+                board_renderer.cell_buttons[cell_index].is_held = true;
+
+                break;
+            }
+
+            case SDL_BUTTON_RIGHT: {
+                // Flag
+                break;
+            }
+        }
+    }
+
+    void GameManager::handle_mouse_up_event(SDL_Event& event) {
         size_t cell_index = -1;
 
         cell_index = board_coords_to_index(Vector2(std::floor(event.button.x / board_renderer.cell_size), std::floor(event.button.y / board_renderer.cell_size)), &(current_board.board_config));
         if (cell_index == -1) return; // Cell not found
 
-        if (!board_renderer.cell_buttons[cell_index].cell->is_revealed) board_renderer.cell_buttons[cell_index].cell->reveal();
-    }
+        board_renderer.cell_buttons[held_cell_button_index].is_held = false;
 
-    void GameManager::handle_mouse_up_event(SDL_Event& event) {
-
+        // Only execute the reveal logic if the cursor is released on the same cell.
+        // The player can avoid the cell being revealed by dragging the cursor elsewhere.
+        if (cell_index == held_cell_button_index) {
+            // Reveal
+            if (!board_renderer.cell_buttons[cell_index].cell->is_revealed) board_renderer.cell_buttons[cell_index].cell->reveal();
+        }
     }
 }

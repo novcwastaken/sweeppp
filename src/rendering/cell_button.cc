@@ -6,7 +6,7 @@ namespace Sweeppp {
         //cell = {};
     }
 
-    void CellButton::render(SDL_Renderer* renderer) {
-        //SDL_RenderTextu
+    void CellButton::set_held_texture() {
+
     }
 }
