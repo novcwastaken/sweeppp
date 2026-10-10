@@ -1,9 +1,7 @@
 #include "board_renderer.hh"
 #include "rendering/texture_atlas.hh"
 #include "rendering/texture_shorthands.hh"
-#include <chrono>
 #include <cmath>
-#include <iomanip>
 #include <iostream>
 
 namespace Sweeppp {
@@ -24,7 +22,7 @@ namespace Sweeppp {
         // Render cell buttons
         for (size_t i = 0; i < cell_buttons.size(); i++) {
             SDL_FRect destination = {
-                .x = (float)cell_size * ((i + 1) % board->board_config.size_x),
+                .x = (float)cell_size * (i % board->board_config.size_x),
                 .y = (float)cell_size * std::floor((float)i / board->board_config.size_x),
                 .w = (float)cell_size,
                 .h = (float)cell_size,
@@ -32,12 +30,10 @@ namespace Sweeppp {
 
             cell_buttons[i].screen_rect = destination;
 
-            // Temporary / WIP
-            std::cout << "@@@ cell buttons [i] revealed? " << cell_buttons[i].cell->is_revealed << std::endl;
-
             if (cell_buttons[i].cell->is_revealed) {
                 atlas->render_texture(CELL_EMPTY, destination);
-            } else {
+            }
+            else {
                 atlas->render_texture(CELL_COVER, destination);
             }
         }

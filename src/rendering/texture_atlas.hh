@@ -36,7 +36,7 @@ namespace Sweeppp {
             int texture_size;
             SDL_Texture* atlas_tex;
 
-            SDL_FRect* get_texture_source(Vector2 coords);
+            SDL_FRect get_texture_source(Vector2 coords);
     };
 }
 

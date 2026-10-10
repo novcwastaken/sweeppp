@@ -15,18 +15,17 @@ namespace Sweeppp {
         SDL_DestroyTexture(atlas_tex);
     }
 
-    SDL_FRect* TextureAtlas::get_texture_source(Vector2 coords) {
-        static SDL_FRect rect {
+    SDL_FRect TextureAtlas::get_texture_source(Vector2 coords) {
+        return SDL_FRect {
             .x = coords.x * texture_size,
             .y = coords.y * texture_size,
             .w = (float)texture_size,
             .h = (float)texture_size
         };
-
-        return &rect;
     }
 
     void TextureAtlas::render_texture(Vector2 source_coords, SDL_FRect destination_rect) {
-        SDL_RenderTexture(renderer, atlas_tex, get_texture_source(source_coords), &destination_rect);
+        SDL_FRect source_rect = get_texture_source(source_coords);
+        SDL_RenderTexture(renderer, atlas_tex, &source_rect, &destination_rect);
     }
 }
