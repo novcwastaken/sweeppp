@@ -23,13 +23,17 @@ namespace Sweeppp {
 
             current_board.cells.push_back(cell);
         }
+
+        // TODO: Account for first click
+        current_board.generate_mines();
+        current_board.set_cell_adjacent_mine_count();
     }
 
     void GameManager::handle_mouse_down_event(SDL_Event& event) {
         size_t cell_index = -1;
 
-        cell_index = board_coords_to_index(Vector2(std::floor(event.button.x / board_renderer.cell_size), std::floor(event.button.y / board_renderer.cell_size)), &(current_board.board_config));        if (cell_index == -1) return; // Cell not found
-
+        cell_index = board_coords_to_index(Vector2(std::floor(event.button.x / board_renderer.cell_size), std::floor(event.button.y / board_renderer.cell_size)), &(current_board.board_config));
+        if (cell_index == -1) return; // Cell not found
 
         switch (event.button.button) {
             case SDL_BUTTON_LEFT: {
@@ -43,7 +47,7 @@ namespace Sweeppp {
             }
 
             case SDL_BUTTON_RIGHT: {
-                // Flag
+                // TODO: Flag
                 break;
             }
         }
@@ -60,8 +64,9 @@ namespace Sweeppp {
         // Only execute the reveal logic if the cursor is released on the same cell.
         // The player can avoid the cell being revealed by dragging the cursor elsewhere.
         if (cell_index == held_cell_button_index) {
-            // Reveal
-            if (!board_renderer.cell_buttons[cell_index].cell->is_revealed) board_renderer.cell_buttons[cell_index].cell->reveal();
+            // Reveal (TEMPORARY)
+            // TODO: Replace with flood fill
+            if (!board_renderer.cell_buttons[cell_index].cell->is_revealed) current_board.reveal_cell(cell_index);
         }
     }
 }

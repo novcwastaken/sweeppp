@@ -12,9 +12,14 @@ namespace Sweeppp {
 
             BoardConfig board_config;
             std::vector<Cell> cells;
-            std::vector<int> revealed_cell_indexes;
+            std::vector<size_t> revealed_cell_indexes;
 
-            void place_mines();
+            std::vector<size_t> get_adjacent_cell_indexes(Cell cell);
+
+            void generate_mines();
+            void set_cell_adjacent_mine_count();
+
+            void reveal_cell(size_t index);
     };
 }
 

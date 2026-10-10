@@ -5,8 +5,10 @@
 #include <iostream>
 
 namespace Sweeppp {
-    BoardRenderer::BoardRenderer() {
+    BoardRenderer::BoardRenderer() {}
 
+    Vector2 BoardRenderer::adjacent_mine_count_to_number_texture_coords(int adjacent_mine_count) {
+        return Vector2(adjacent_mine_count - 1, 1);
     }
 
     void BoardRenderer::initialize_cell_buttons() {
@@ -34,12 +36,23 @@ namespace Sweeppp {
                 atlas->render_texture(CELL_EMPTY, destination);
             }
             else {
+                // This is ugly
                 if (cell_buttons[i].is_held) {
                     // The cell button is being held down
                     atlas->render_texture(CELL_EMPTY, destination);
                 } else {
                     atlas->render_texture(CELL_COVER, destination);
                 }
+            }
+
+            // TEMPORARY for testing mine generation
+            if (cell_buttons[i].cell->is_mine) {
+                atlas->render_texture(MINE, destination);
+            }
+
+            // TEMPORARY for testing number placement
+            if (cell_buttons[i].cell->adjacent_mine_count > 0) {
+                atlas->render_texture(adjacent_mine_count_to_number_texture_coords(cell_buttons[i].cell->adjacent_mine_count), destination);
             }
         }
     }

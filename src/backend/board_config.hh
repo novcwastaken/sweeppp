@@ -16,6 +16,8 @@ namespace Sweeppp {
             BoardConfig very_big = BoardConfig { .size_x = 30, .size_y = 30, .mine_count = 99 };
             BoardConfig very_very_big = BoardConfig { .size_x = 50, .size_y = 30, .mine_count = 99 };
             BoardConfig very_very_big_vertical = BoardConfig { .size_x = 30, .size_y = 50, .mine_count = 99 };
+
+            BoardConfig invalid = BoardConfig { .size_x = 9, .size_y = 9, .mine_count = 99 };
     };
 }
 

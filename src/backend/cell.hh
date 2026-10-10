@@ -15,8 +15,6 @@ namespace Sweeppp {
             int adjacent_mine_count = 0;
 
             Vector2 coordinates = Vector2(-1, -1);
-
-            void reveal();
     };
 }
 

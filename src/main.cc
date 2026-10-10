@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
@@ -7,8 +9,6 @@
 #include "SDL3/SDL_render.h"
 #include "SDL3/SDL_surface.h"
 #include "backend/board_config.hh"
-#include "backend/util.hh"
-#include "rendering/texture_shorthands.hh"
 #include "game_manager.hh"
 #include "rendering/board_renderer.hh"
 #include "rendering/texture_atlas.hh"
@@ -22,6 +22,8 @@ void cleanup(SDLState& sdl_state);
 void set_window_size_from_board(SDL_Window* window, int cell_size, Sweeppp::BoardConfig board_config);
 
 int main(int argc, char* argv[]) {
+    srand(time(0));
+
     SDLState sdl_state {};
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {

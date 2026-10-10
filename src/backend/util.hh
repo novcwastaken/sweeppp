@@ -7,10 +7,14 @@ namespace Sweeppp {
         public:
             Vector2(float x_, float y_);
             float x, y;
+
+            Vector2 operator+(const Vector2 v);
     };
 
     int board_coords_to_index(Vector2 coords, BoardConfig* board_config);
     Vector2 board_index_to_coords(int index, BoardConfig* board_config);
+
+    bool is_board_coord_valid(Vector2 coords, BoardConfig* board_config);
 }
 
 #endif // UTIL_HH
