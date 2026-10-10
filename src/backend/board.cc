@@ -4,7 +4,7 @@
 #include <iostream>
 
 namespace Sweeppp {
-    std::vector<Vector2> adjacent_cell_coord_offsets = {
+    const std::vector<Vector2> ADJACENT_CELL_COORD_OFFSETS = {
         // Top 3
         Vector2(-1, -1),
         Vector2(0, -1),
@@ -29,9 +29,8 @@ namespace Sweeppp {
     std::vector<size_t> Board::get_adjacent_cell_indexes(Cell cell) {
         std::vector<size_t> indexes;
 
-        for (size_t i = 0; i < adjacent_cell_coord_offsets.size(); i++) {
-            Vector2 offset_coord = cell.coordinates + adjacent_cell_coord_offsets[i];
-
+        for (size_t i = 0; i < ADJACENT_CELL_COORD_OFFSETS.size(); i++) {
+            Vector2 offset_coord = cell.coordinates + ADJACENT_CELL_COORD_OFFSETS[i];
             if (is_board_coord_valid(offset_coord, &board_config)) {
                 indexes.push_back(board_coords_to_index(offset_coord, &board_config));
             }

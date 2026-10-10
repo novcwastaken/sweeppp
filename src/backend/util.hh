@@ -2,6 +2,7 @@
 #define UTIL_HH
 
 #include "backend/board_config.hh"
+#include <string>
 namespace Sweeppp {
     struct Vector2 {
         public:
@@ -9,6 +10,7 @@ namespace Sweeppp {
             float x, y;
 
             Vector2 operator+(const Vector2 v);
+            std::string to_string() const;
     };
 
     int board_coords_to_index(Vector2 coords, BoardConfig* board_config);
