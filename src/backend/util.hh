@@ -3,6 +3,7 @@
 
 #include "backend/board_config.hh"
 #include <string>
+#include <vector>
 namespace Sweeppp {
     struct Vector2 {
         public:

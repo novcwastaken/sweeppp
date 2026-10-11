@@ -16,7 +16,7 @@ namespace Sweeppp {
 
             std::vector<size_t> get_adjacent_cell_indexes(Cell cell);
 
-            void generate_mines();
+            void generate_mines(int first_click_index);
             void set_cell_adjacent_mine_count();
 
             void reveal_cell(size_t index);

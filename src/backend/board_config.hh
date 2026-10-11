@@ -1,9 +1,12 @@
 #ifndef BOARD_CONFIG_HH
 #define BOARD_CONFIG_HH
 
+#include <string>
+
 namespace Sweeppp {
     struct BoardConfig {
         int size_x, size_y, mine_count;
+        std::string to_string();
     };
 
     struct StandardBoardConfigs {
@@ -17,6 +20,7 @@ namespace Sweeppp {
             BoardConfig very_very_big = BoardConfig { .size_x = 50, .size_y = 30, .mine_count = 250 };
             BoardConfig very_very_big_vertical = BoardConfig { .size_x = 30, .size_y = 50, .mine_count = 250 };
 
+            BoardConfig death = BoardConfig { .size_x = 16, .size_y = 16, .mine_count = 248 };
             BoardConfig invalid = BoardConfig { .size_x = 9, .size_y = 9, .mine_count = 99 };
     };
 }

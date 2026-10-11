@@ -39,20 +39,27 @@ namespace Sweeppp {
         return indexes;
     }
 
-    void Board::generate_mines() {
-        if (board_config.mine_count > board_config.size_x * board_config.size_y){
+    void Board::generate_mines(int first_click_index) {
+        if (board_config.mine_count > board_config.size_x * board_config.size_y - 9){
             std::cerr << std::format(
-                "\e[0;31mError: Tried to generate mines from an invalid BoardConfig! Mine count (here: {}) cannot be greater than the amount of cells (size_x * size_y, here: {} * {} = {})!\e[0m",
-                board_config.mine_count, board_config.size_x, board_config.size_y, board_config.size_x * board_config.size_y
+                "\e[0;31mError: Tried to generate mines from an invalid BoardConfig! Mine count (here: {}) cannot be greater than the amount of cells minus 9 (size_x * size_y - 9, here: {} * {} - 9 = {})!\e[0m",
+                board_config.mine_count, board_config.size_x, board_config.size_y, board_config.size_x * board_config.size_y - 9
             ) << std::endl;
 
             return;
         }
 
         // Generate mine indexes
-        std::vector<int> mine_indexes;
+        std::vector<size_t> mine_indexes;
+        std::vector<size_t> safe_indexes = get_adjacent_cell_indexes(cells[first_click_index]);
+        safe_indexes.push_back(first_click_index);
+
         while (mine_indexes.size() < board_config.mine_count) {
             int new_index = rand() % cells.size();
+
+            if (std::find(safe_indexes.begin(), safe_indexes.end(), new_index) != safe_indexes.end()) {
+                continue;
+            }
 
             if (std::find(mine_indexes.begin(), mine_indexes.end(), new_index) == mine_indexes.end()) {
                 mine_indexes.push_back(new_index);

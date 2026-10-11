@@ -59,10 +59,9 @@ int main(int argc, char* argv[]) {
     Sweeppp::GameManager game_manager {};
     const Sweeppp::StandardBoardConfigs STANDARD_BOARD_CONFIGS;
 
-    // TODO: move texture atlas to game manager
     Sweeppp::TextureAtlas texture_atlas = Sweeppp::TextureAtlas(16, sdl_state.renderer, "assets/texture_atlas.png");
 
-    game_manager.start_game(STANDARD_BOARD_CONFIGS.very_big);
+    game_manager.start_game(STANDARD_BOARD_CONFIGS.very_very_big);
     game_manager.board_renderer.initialize_cell_buttons();
 
     set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.current_board.board_config);

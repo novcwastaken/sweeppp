@@ -2,15 +2,28 @@
 #include "SDL3/SDL_mouse.h"
 #include "backend/util.hh"
 #include "rendering/board_renderer.hh"
+#include <chrono>
 #include <cmath>
 #include <iostream>
 
 namespace Sweeppp {
+    bool has_first_click_happened = false;
     int held_cell_button_index = -1;
 
     GameManager::GameManager() {
         board_renderer = {};
         current_board = {};
+    }
+
+    void GameManager::generate_current_board(int first_click_index) {
+        auto start = std::chrono::high_resolution_clock::now();
+        current_board.generate_mines(first_click_index);
+        current_board.set_cell_adjacent_mine_count();
+        auto end = std::chrono::high_resolution_clock::now();
+
+        std::chrono::duration<double, std::milli> ms_double = end - start;
+
+        std::cout << "\e[0;32mGenerated " << current_board.board_config.to_string() << " board in " << ms_double << std::endl;
     }
 
     void GameManager::start_game(BoardConfig board_config) {
@@ -23,10 +36,6 @@ namespace Sweeppp {
 
             current_board.cells.push_back(cell);
         }
-
-        // TODO: Account for first click
-        current_board.generate_mines();
-        current_board.set_cell_adjacent_mine_count();
     }
 
     void GameManager::handle_mouse_down_event(SDL_Event& event) {
@@ -64,9 +73,13 @@ namespace Sweeppp {
         // Only execute the reveal logic if the cursor is released on the same cell.
         // The player can avoid the cell being revealed by dragging the cursor elsewhere.
         if (cell_index == held_cell_button_index) {
-            // Reveal (TEMPORARY)
-            // TODO: Replace with flood fill
-            if (!board_renderer.cell_buttons[cell_index].cell->is_revealed) current_board.reveal_cell(cell_index);
+            //if (!board_renderer.cell_buttons[cell_index].cell->is_revealed) current_board.reveal_cell(cell_index);
+
+            if (!has_first_click_happened) {
+                has_first_click_happened = true;
+
+                generate_current_board(cell_index);
+            }
         }
     }
 }

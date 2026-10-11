@@ -13,6 +13,8 @@ namespace Sweeppp {
             BoardRenderer board_renderer;
             Board current_board;
 
+            void generate_current_board(int first_click_index);
+
             void start_game(BoardConfig board_config);
             void handle_mouse_down_event(SDL_Event& event);
             void handle_mouse_up_event(SDL_Event& event);
