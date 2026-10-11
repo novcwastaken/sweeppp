@@ -25,11 +25,13 @@ namespace Sweeppp {
             void set_cell_adjacent_mine_count();
 
             void reveal_cell(size_t index);
+            void chord(size_t origin_cell_index);
 
             void flood_fill(size_t origin_cell_index);
             void flood_fill_recursive(size_t origin_cell_index);
 
             void toggle_flag(size_t index);
+            int get_adjacent_flag_count(size_t index);
     };
 }
 

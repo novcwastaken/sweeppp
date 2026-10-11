@@ -44,10 +44,20 @@ namespace Sweeppp {
                 // Mine (incl. trigger mine BG)
                 if (cell_buttons[i].cell->is_mine) {
                     if (cell_buttons[i].cell->is_trigger_mine) atlas->render_texture(MINE_TRGGER_BG, destination);
-                    atlas->render_texture(MINE, destination);
+                    if (!cell_buttons[i].cell->is_flagged) {
+                        atlas->render_texture(MINE, destination);
+                        continue;
+                    }
+
+                    // Game over flag (correct)
+                    if (is_game_over && cell_buttons[i].cell->is_flagged && cell_buttons[i].cell->is_mine) {
+                        atlas->render_texture(CELL_COVER, destination);
+                        atlas->render_texture(FLAG, destination);
+                        continue;
+                    }
                 }
 
-                continue;
+                continue; // DO NOT REMOVE THIS UNDER ANY CIRCUMSTANCE
             }
 
             // Cell button held
@@ -63,6 +73,8 @@ namespace Sweeppp {
                 atlas->render_texture(FLAG, destination);
                 if (!cell_buttons[i].cell->is_mine && is_game_over) atlas->render_texture(FLAG_WRONG, destination); // Wrong flag
             }
+
+
         }
     }
 }

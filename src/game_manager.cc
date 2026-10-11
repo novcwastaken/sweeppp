@@ -36,7 +36,9 @@ namespace Sweeppp {
 
         for (size_t i = 0; i < board_config.size_x * board_config.size_y; i++) {
             Cell cell = Cell();
+
             cell.coordinates = board_index_to_coords(i, &board_config);
+            cell.adjacent_cell_indexes = current_board.get_adjacent_cell_indexes(cell);
 
             current_board.cells.push_back(cell);
         }
@@ -58,9 +60,6 @@ namespace Sweeppp {
         cell_index = board_coords_to_index(Vector2(std::floor(event.button.x / board_renderer.cell_size), std::floor(event.button.y / board_renderer.cell_size)), &(current_board.board_config));
         if (cell_index == -1) return; // Cell not found
 
-        // Cell is already revealed, there is nothing to do
-        if (board_renderer.cell_buttons[cell_index].cell->is_revealed) return;
-
         switch (event.button.button) {
             case SDL_BUTTON_LEFT: {
                 if (current_board.cells[cell_index].is_flagged) return;
@@ -73,6 +72,11 @@ namespace Sweeppp {
 
             case SDL_BUTTON_RIGHT: {
                 current_board.toggle_flag(cell_index);
+                break;
+            }
+
+            case SDL_BUTTON_MIDDLE: {
+                current_board.chord(cell_index);
                 break;
             }
         }
@@ -104,6 +108,7 @@ namespace Sweeppp {
             current_board.cells[cell_index].is_trigger_mine = true;
             _is_game_over = true;
 
+            // Reveal all other mines
             for (size_t i = 0; i < current_board.mine_indexes.size(); i++) {
                 current_board.reveal_cell(current_board.mine_indexes[i]);
             }

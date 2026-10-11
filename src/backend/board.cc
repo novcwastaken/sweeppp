@@ -104,9 +104,31 @@ namespace Sweeppp {
         revealed_cell_count++;
     }
 
+    void Board::chord(size_t origin_cell_index) {
+        if (!cells[origin_cell_index].is_revealed) return;
+        if (get_adjacent_flag_count(origin_cell_index) != cells[origin_cell_index].adjacent_mine_count) return;
+
+        for (size_t i = 0; i < cells[origin_cell_index].adjacent_cell_indexes.size(); i++) {
+            //if (!cells[cells[origin_cell_index].adjacent_cell_indexes[i]].is_flagged) continue;
+
+
+            flood_fill(cells[origin_cell_index].adjacent_cell_indexes[i]);
+        }
+    }
+
     void Board::toggle_flag(size_t index) {
         flag_count += cells[index].is_flagged ? -1 : 1;
         cells[index].is_flagged = !cells[index].is_flagged;
+    }
+
+    int Board::get_adjacent_flag_count(size_t index) {
+        int count = 0;
+
+        for (size_t i = 0; i < cells[index].adjacent_cell_indexes.size(); i++) {
+            if (cells[cells[index].adjacent_cell_indexes[i]].is_flagged) count++;
+        }
+
+        return count;
     }
 
     void Board::flood_fill(size_t origin_cell_index) {
@@ -131,11 +153,8 @@ namespace Sweeppp {
         if (cells[origin_cell_index].adjacent_mine_count > 0) return;
 
         if (cells[origin_cell_index].adjacent_mine_count == 0) {
-            // This is comically unoptimized, but I'll cache the adjacent indexes in the Cell class sometime™️
-            std::vector<size_t> adjacent_indexes = get_adjacent_cell_indexes(cells[origin_cell_index]);
-
-            for (size_t i = 0; i < adjacent_indexes.size(); i++) {
-                flood_fill_recursive(adjacent_indexes[i]);
+            for (size_t i = 0; i < cells[origin_cell_index].adjacent_cell_indexes.size(); i++) {
+                flood_fill_recursive(cells[origin_cell_index].adjacent_cell_indexes[i]);
             }
         }
     }
