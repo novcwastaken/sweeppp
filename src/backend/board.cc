@@ -1,6 +1,7 @@
 #include "board.hh"
 #include "backend/util.hh"
 #include "board_config.hh"
+#include <cstddef>
 #include <iostream>
 
 namespace Sweeppp {
@@ -20,10 +21,14 @@ namespace Sweeppp {
         Vector2(1, 1),
     };
 
+    std::vector<size_t> visited_floodfill_indexes;
+
     Board::Board() {
         board_config = BoardConfig {
             .size_x = -1, .size_y = -1, .mine_count = -1
         };
+
+        cells.clear();
     }
 
     std::vector<size_t> Board::get_adjacent_cell_indexes(Cell cell) {
@@ -70,6 +75,9 @@ namespace Sweeppp {
         for (size_t i = 0; i < mine_indexes.size(); i++) {
             cells[mine_indexes[i]].is_mine = true;
         }
+
+        // Cache mine indexes
+        this->mine_indexes = mine_indexes;
     }
 
     void Board::set_cell_adjacent_mine_count() {
@@ -88,7 +96,47 @@ namespace Sweeppp {
     }
 
     void Board::reveal_cell(size_t index) {
+        if (cells[index].is_revealed) return;
+
         cells[index].is_revealed = true;
         revealed_cell_indexes.push_back(index);
+
+        revealed_cell_count++;
+    }
+
+    void Board::toggle_flag(size_t index) {
+        flag_count += cells[index].is_flagged ? -1 : 1;
+        cells[index].is_flagged = !cells[index].is_flagged;
+    }
+
+    void Board::flood_fill(size_t origin_cell_index) {
+        flood_fill_recursive(origin_cell_index);
+        visited_floodfill_indexes.clear();
+    }
+
+    void Board::flood_fill_recursive(size_t origin_cell_index) {
+        if (std::find(visited_floodfill_indexes.begin(), visited_floodfill_indexes.end(), origin_cell_index) != visited_floodfill_indexes.end()) {
+            return;
+        }
+
+        visited_floodfill_indexes.push_back(origin_cell_index);
+
+        if (cells[origin_cell_index].is_flagged) return;
+
+        reveal_cell(origin_cell_index);
+
+        // Game over logic is handled in GameManager::handle_mouse_up_event
+        if (cells[origin_cell_index].is_mine) return;
+
+        if (cells[origin_cell_index].adjacent_mine_count > 0) return;
+
+        if (cells[origin_cell_index].adjacent_mine_count == 0) {
+            // This is comically unoptimized, but I'll cache the adjacent indexes in the Cell class sometime™️
+            std::vector<size_t> adjacent_indexes = get_adjacent_cell_indexes(cells[origin_cell_index]);
+
+            for (size_t i = 0; i < adjacent_indexes.size(); i++) {
+                flood_fill_recursive(adjacent_indexes[i]);
+            }
+        }
     }
 }

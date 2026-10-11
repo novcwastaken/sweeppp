@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 
     Sweeppp::TextureAtlas texture_atlas = Sweeppp::TextureAtlas(16, sdl_state.renderer, "assets/texture_atlas.png");
 
-    game_manager.start_game(STANDARD_BOARD_CONFIGS.very_very_big);
+    game_manager.start_game(STANDARD_BOARD_CONFIGS.beginner);
     game_manager.board_renderer.initialize_cell_buttons();
 
     set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.current_board.board_config);
@@ -92,11 +92,24 @@ int main(int argc, char* argv[]) {
         // Rendering
         game_manager.board_renderer.render_board(
             sdl_state.renderer,
-            &texture_atlas
+            &texture_atlas,
+            game_manager.is_game_over()
         );
 
         // Present
         SDL_RenderPresent(sdl_state.renderer);
+
+        // Window title
+        SDL_SetWindowTitle(sdl_state.window, std::format("Sweep++ - {}/{} - {}", game_manager.current_board.flag_count, game_manager.current_board.board_config.mine_count, game_manager.is_game_won()).c_str());
+
+        Uint32 mouseState = SDL_GetMouseState(NULL, NULL);
+        bool leftDown = (mouseState & SDL_BUTTON_LMASK) != 0;
+        bool rightDown = (mouseState & SDL_BUTTON_RMASK) != 0;
+
+        if (leftDown && rightDown) {
+            // Both left and right buttons are pressed at this exact moment
+            std::cout << "@@@ lc & rc" << std::endl;
+        }
     }
 
     texture_atlas.destroy_atlas_texture();

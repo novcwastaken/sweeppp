@@ -18,6 +18,9 @@ namespace Sweeppp {
             void start_game(BoardConfig board_config);
             void handle_mouse_down_event(SDL_Event& event);
             void handle_mouse_up_event(SDL_Event& event);
+
+            bool is_game_won();
+            bool is_game_over();
     };
 }
 

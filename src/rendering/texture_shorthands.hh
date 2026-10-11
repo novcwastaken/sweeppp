@@ -9,7 +9,7 @@ namespace Sweeppp {
     const Vector2 MINE = Vector2(2, 0);
     const Vector2 FLAG = Vector2(3, 0);
     const Vector2 FLAG_WRONG = Vector2(4, 0);
-    const Vector2 MINE_REVEALED_BG = Vector2(5, 0);
+    const Vector2 MINE_TRGGER_BG = Vector2(5, 0);
 
     const Vector2 NUM_1 = Vector2(0, 1);
     const Vector2 NUM_2 = Vector2(1, 1);

@@ -8,6 +8,8 @@
 
 namespace Sweeppp {
     bool has_first_click_happened = false;
+    bool _is_game_over = false;
+
     int held_cell_button_index = -1;
 
     GameManager::GameManager() {
@@ -23,10 +25,12 @@ namespace Sweeppp {
 
         std::chrono::duration<double, std::milli> ms_double = end - start;
 
-        std::cout << "\e[0;32mGenerated " << current_board.board_config.to_string() << " board in " << ms_double << std::endl;
+        std::cout << "\e[0;34mGenerated " << current_board.board_config.to_string() << " board in " << ms_double << "\e[0m" << std::endl;
     }
 
     void GameManager::start_game(BoardConfig board_config) {
+        _is_game_over = false;
+
         current_board.board_config = board_config;
         board_renderer.board = &current_board;
 
@@ -38,16 +42,28 @@ namespace Sweeppp {
         }
     }
 
+    bool GameManager::is_game_won() {
+        return current_board.revealed_cell_count == current_board.cells.size() - current_board.board_config.mine_count;
+    }
+
+    bool GameManager::is_game_over() {
+        return _is_game_over;
+    }
+
     void GameManager::handle_mouse_down_event(SDL_Event& event) {
+        if (_is_game_over) return;
+
         size_t cell_index = -1;
 
         cell_index = board_coords_to_index(Vector2(std::floor(event.button.x / board_renderer.cell_size), std::floor(event.button.y / board_renderer.cell_size)), &(current_board.board_config));
         if (cell_index == -1) return; // Cell not found
 
+        // Cell is already revealed, there is nothing to do
+        if (board_renderer.cell_buttons[cell_index].cell->is_revealed) return;
+
         switch (event.button.button) {
             case SDL_BUTTON_LEFT: {
-                // Cell is already revealed, there is nothing to do
-                if (board_renderer.cell_buttons[cell_index].cell->is_revealed) return;
+                if (current_board.cells[cell_index].is_flagged) return;
 
                 held_cell_button_index = cell_index;
                 board_renderer.cell_buttons[cell_index].is_held = true;
@@ -56,13 +72,15 @@ namespace Sweeppp {
             }
 
             case SDL_BUTTON_RIGHT: {
-                // TODO: Flag
+                current_board.toggle_flag(cell_index);
                 break;
             }
         }
     }
 
     void GameManager::handle_mouse_up_event(SDL_Event& event) {
+        if (event.button.button != SDL_BUTTON_LEFT) return;
+
         size_t cell_index = -1;
 
         cell_index = board_coords_to_index(Vector2(std::floor(event.button.x / board_renderer.cell_size), std::floor(event.button.y / board_renderer.cell_size)), &(current_board.board_config));
@@ -72,14 +90,32 @@ namespace Sweeppp {
 
         // Only execute the reveal logic if the cursor is released on the same cell.
         // The player can avoid the cell being revealed by dragging the cursor elsewhere.
-        if (cell_index == held_cell_button_index) {
-            //if (!board_renderer.cell_buttons[cell_index].cell->is_revealed) current_board.reveal_cell(cell_index);
+        if (cell_index != held_cell_button_index) return;
 
-            if (!has_first_click_happened) {
-                has_first_click_happened = true;
+        if (!has_first_click_happened) {
+            has_first_click_happened = true;
+            generate_current_board(cell_index);
+        }
 
-                generate_current_board(cell_index);
+        // Clicked a mine, game over
+        if (current_board.cells[cell_index].is_mine) {
+            if (!_is_game_over) std::cout << "\e[0;31mYou clicked a mine, game over!\e[0m" << std::endl;
+
+            current_board.cells[cell_index].is_trigger_mine = true;
+            _is_game_over = true;
+
+            for (size_t i = 0; i < current_board.mine_indexes.size(); i++) {
+                current_board.reveal_cell(current_board.mine_indexes[i]);
             }
+
+            return;
+        }
+
+        current_board.flood_fill(cell_index);
+
+        if (is_game_won()) {
+            _is_game_over = true;
+            std::cout << "\e[0;32mGame won, congrats!\e[0m" << std::endl;
         }
     }
 }

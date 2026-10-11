@@ -20,7 +20,7 @@ namespace Sweeppp {
         }
     }
 
-    void BoardRenderer::render_board(SDL_Renderer* renderer, TextureAtlas* atlas) {
+    void BoardRenderer::render_board(SDL_Renderer* renderer, TextureAtlas* atlas, bool is_game_over) {
         // Render cell buttons
         for (size_t i = 0; i < cell_buttons.size(); i++) {
             SDL_FRect destination = {
@@ -34,25 +34,34 @@ namespace Sweeppp {
 
             if (cell_buttons[i].cell->is_revealed) {
                 atlas->render_texture(CELL_EMPTY, destination);
-            }
-            else {
-                // This is ugly
-                if (cell_buttons[i].is_held) {
-                    // The cell button is being held down
-                    atlas->render_texture(CELL_EMPTY, destination);
-                } else {
-                    atlas->render_texture(CELL_COVER, destination);
+
+                // Number
+                if (cell_buttons[i].cell->adjacent_mine_count > 0) {
+                    atlas->render_texture(adjacent_mine_count_to_number_texture_coords(cell_buttons[i].cell->adjacent_mine_count), destination);
+                    continue;
                 }
+
+                // Mine (incl. trigger mine BG)
+                if (cell_buttons[i].cell->is_mine) {
+                    if (cell_buttons[i].cell->is_trigger_mine) atlas->render_texture(MINE_TRGGER_BG, destination);
+                    atlas->render_texture(MINE, destination);
+                }
+
+                continue;
             }
 
-            // TEMPORARY for testing mine generation
-            if (cell_buttons[i].cell->is_mine) {
-                atlas->render_texture(MINE, destination);
+            // Cell button held
+            if (cell_buttons[i].is_held) {
+                atlas->render_texture(CELL_EMPTY, destination);
+                continue;
+            } else {
+                atlas->render_texture(CELL_COVER, destination);
             }
 
-            // TEMPORARY for testing number placement
-            if (cell_buttons[i].cell->adjacent_mine_count > 0) {
-                atlas->render_texture(adjacent_mine_count_to_number_texture_coords(cell_buttons[i].cell->adjacent_mine_count), destination);
+            // Flag
+            if (cell_buttons[i].cell->is_flagged) {
+                atlas->render_texture(FLAG, destination);
+                if (!cell_buttons[i].cell->is_mine && is_game_over) atlas->render_texture(FLAG_WRONG, destination); // Wrong flag
             }
         }
     }

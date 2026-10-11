@@ -19,7 +19,7 @@ namespace Sweeppp {
             Vector2 adjacent_mine_count_to_number_texture_coords(int adjacent_mine_count);
 
             void initialize_cell_buttons();
-            void render_board(SDL_Renderer* renderer, TextureAtlas* atlas);
+            void render_board(SDL_Renderer* renderer, TextureAtlas* atlas, bool is_game_over);
     };
 }
 
