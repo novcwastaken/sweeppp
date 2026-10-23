@@ -13,6 +13,7 @@ namespace Sweeppp {
             BoardRenderer();
 
             int cell_size = 32;
+            int border_thickness = 16;
             std::vector<CellButton> cell_buttons;
             Board* board;
 

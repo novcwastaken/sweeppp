@@ -20,7 +20,7 @@ struct SDLState {
 };
 
 void cleanup(SDLState& sdl_state);
-void set_window_size_from_board(SDL_Window* window, int cell_size, Sweeppp::BoardConfig board_config);
+void set_window_size_from_board(SDL_Window* window, int cell_size, int border_thickness, Sweeppp::BoardConfig board_config);
 
 int main(int argc, char* argv[]) {
     srand(time(0));
@@ -61,10 +61,10 @@ int main(int argc, char* argv[]) {
 
     Sweeppp::TextureAtlas texture_atlas = Sweeppp::TextureAtlas(16, sdl_state.renderer, "assets/texture_atlas.png");
 
-    game_manager.start_game(STANDARD_BOARD_CONFIGS.beginner);
+    game_manager.start_game(STANDARD_BOARD_CONFIGS.intermediate);
     game_manager.board_renderer.initialize_cell_buttons();
 
-    set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.current_board.board_config);
+    set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.board_renderer.border_thickness, game_manager.current_board.board_config);
 
     // Main loop
     bool running = true;
@@ -90,15 +90,15 @@ int main(int argc, char* argv[]) {
         }
 
         // Rendering
-        // game_manager.board_renderer.render_board(
-        //     sdl_state.renderer,
-        //     &texture_atlas,
-        //     game_manager.is_game_over()
-        // );
-
         game_manager.board_renderer.render_border(
             sdl_state.renderer,
             &texture_atlas
+        );
+
+        game_manager.board_renderer.render_board(
+            sdl_state.renderer,
+            &texture_atlas,
+            game_manager.is_game_over()
         );
 
         // Present
@@ -131,6 +131,10 @@ void cleanup(SDLState& sdl_state) {
     SDL_Quit();
 }
 
-void set_window_size_from_board(SDL_Window* window, int cell_size, Sweeppp::BoardConfig board_config) {
-    SDL_SetWindowSize(window, board_config.size_x * cell_size, board_config.size_y * cell_size);
+void set_window_size_from_board(SDL_Window* window, int cell_size, int border_thickness, Sweeppp::BoardConfig board_config) {
+    SDL_SetWindowSize(
+        window,
+        board_config.size_x * cell_size + border_thickness * 2,
+        board_config.size_y * cell_size + border_thickness * 2
+    );
 }

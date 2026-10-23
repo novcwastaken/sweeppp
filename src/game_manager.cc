@@ -69,7 +69,10 @@ namespace Sweeppp {
 
         size_t cell_index = -1;
 
-        cell_index = board_coords_to_index(Vector2(std::floor(event.button.x / board_renderer.cell_size), std::floor(event.button.y / board_renderer.cell_size)), &(current_board.board_config));
+        cell_index = board_coords_to_index(Vector2(
+            std::floor((event.button.x - board_renderer.border_thickness) / board_renderer.cell_size),
+            std::floor((event.button.y - board_renderer.border_thickness) / board_renderer.cell_size)
+        ), &(current_board.board_config));
         if (cell_index == -1) return; // Cell not found
 
         switch (event.button.button) {
@@ -107,7 +110,10 @@ namespace Sweeppp {
 
         size_t cell_index = -1;
 
-        cell_index = board_coords_to_index(Vector2(std::floor(event.button.x / board_renderer.cell_size), std::floor(event.button.y / board_renderer.cell_size)), &(current_board.board_config));
+        cell_index = board_coords_to_index(Vector2(
+            std::floor((event.button.x - board_renderer.border_thickness) / board_renderer.cell_size),
+            std::floor((event.button.y - board_renderer.border_thickness) / board_renderer.cell_size)
+        ), &(current_board.board_config));
         if (cell_index == -1) return; // Cell not found
 
         board_renderer.cell_buttons[held_cell_button_index].is_held = false;
