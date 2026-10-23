@@ -21,6 +21,34 @@ namespace Sweeppp {
         }
     }
 
+    void BoardRenderer::render_border_top(SDL_Renderer* renderer, TextureAtlas* atlas) {
+        SDL_FRect border_top_src {
+            .x = (float)atlas->get_texture_size() * 2,
+            .y = (float)atlas->get_texture_size() * 2,
+            .w = (float)atlas->get_texture_size() * 2,
+            .h = (float)atlas->get_texture_size() * 2
+        };
+
+        SDL_FRect border_top_dst {
+            .x = 0,
+            .y = 0,
+            .w = (float)(board->board_config.size_x * cell_size + border_thickness * 2),
+            .h = (float)(border_top_size + border_thickness)
+        };
+
+        SDL_RenderTexture9Grid(
+            renderer,
+            atlas->get_atlas_texture(),
+            &border_top_src,
+            8, 8, 8, 8,
+            2,
+            &border_top_dst
+        );
+
+        // Render flag display
+
+    }
+
     void BoardRenderer::render_border(SDL_Renderer* renderer, TextureAtlas* atlas) {
         SDL_FRect border_bottom_src {
             .x = (float)atlas->get_texture_size() * 4,
@@ -31,13 +59,9 @@ namespace Sweeppp {
 
         SDL_FRect border_bottom_dst {
             .x = 0,
-            .y = 0,
+            .y = (float)border_top_size,
             .w = (float)(board->board_config.size_x * cell_size + border_thickness * 2),
             .h = (float)(board->board_config.size_y * cell_size + border_thickness * 2)
-        };
-
-        SDL_FRect full_atlas_src {
-            0, 0, 256, 256
         };
 
         SDL_RenderTexture9Grid(
@@ -55,7 +79,7 @@ namespace Sweeppp {
         for (size_t i = 0; i < cell_buttons.size(); i++) {
             SDL_FRect destination = {
                 .x = (float)cell_size * (i % board->board_config.size_x) + border_thickness,
-                .y = (float)cell_size * std::floor((float)i / board->board_config.size_x) + border_thickness,
+                .y = (float)cell_size * std::floor((float)i / board->board_config.size_x) + border_thickness + border_top_size,
                 .w = (float)cell_size,
                 .h = (float)cell_size,
             };

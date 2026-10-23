@@ -19,6 +19,18 @@ namespace Sweeppp {
     const Vector2 NUM_6 = Vector2(5, 1);
     const Vector2 NUM_7 = Vector2(6, 1);
     const Vector2 NUM_8 = Vector2(7, 1);
+
+    const Vector2 DISPLAY_NUM_0 = Vector2(0, 4);
+    const Vector2 DISPLAY_NUM_1 = Vector2(1, 4);
+    const Vector2 DISPLAY_NUM_2 = Vector2(2, 4);
+    const Vector2 DISPLAY_NUM_3 = Vector2(3, 4);
+    const Vector2 DISPLAY_NUM_4 = Vector2(4, 4);
+    const Vector2 DISPLAY_NUM_5 = Vector2(5, 4);
+    const Vector2 DISPLAY_NUM_6 = Vector2(6, 4);
+    const Vector2 DISPLAY_NUM_7 = Vector2(7, 4);
+    const Vector2 DISPLAY_NUM_8 = Vector2(8, 4);
+    const Vector2 DISPLAY_NUM_9 = Vector2(9, 4);
+    const Vector2 DISPLAY_BG = Vector2(10, 4);
 }
 
 #endif

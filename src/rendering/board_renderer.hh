@@ -14,6 +14,7 @@ namespace Sweeppp {
 
             int cell_size = 32;
             int border_thickness = 16;
+            int border_top_size = 64;
             std::vector<CellButton> cell_buttons;
             Board* board;
 
@@ -21,6 +22,7 @@ namespace Sweeppp {
 
             void initialize_cell_buttons();
             void render_board(SDL_Renderer* renderer, TextureAtlas* atlas, bool is_game_over);
+            void render_border_top(SDL_Renderer* renderer, TextureAtlas* atlas);
             void render_border(SDL_Renderer* renderer, TextureAtlas* atlas);
     };
 }

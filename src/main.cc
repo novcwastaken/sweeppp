@@ -20,7 +20,7 @@ struct SDLState {
 };
 
 void cleanup(SDLState& sdl_state);
-void set_window_size_from_board(SDL_Window* window, int cell_size, int border_thickness, Sweeppp::BoardConfig board_config);
+void set_window_size_from_board(SDL_Window* window, int cell_size, int border_thickness, int border_top_size, Sweeppp::BoardConfig board_config);
 
 int main(int argc, char* argv[]) {
     srand(time(0));
@@ -64,7 +64,13 @@ int main(int argc, char* argv[]) {
     game_manager.start_game(STANDARD_BOARD_CONFIGS.intermediate);
     game_manager.board_renderer.initialize_cell_buttons();
 
-    set_window_size_from_board(sdl_state.window, game_manager.board_renderer.cell_size, game_manager.board_renderer.border_thickness, game_manager.current_board.board_config);
+    set_window_size_from_board(
+        sdl_state.window,
+        game_manager.board_renderer.cell_size,
+        game_manager.board_renderer.border_thickness,
+        game_manager.board_renderer.border_top_size,
+        game_manager.current_board.board_config
+    );
 
     // Main loop
     bool running = true;
@@ -90,6 +96,11 @@ int main(int argc, char* argv[]) {
         }
 
         // Rendering
+        game_manager.board_renderer.render_border_top(
+            sdl_state.renderer,
+            &texture_atlas
+        );
+
         game_manager.board_renderer.render_border(
             sdl_state.renderer,
             &texture_atlas
@@ -131,10 +142,10 @@ void cleanup(SDLState& sdl_state) {
     SDL_Quit();
 }
 
-void set_window_size_from_board(SDL_Window* window, int cell_size, int border_thickness, Sweeppp::BoardConfig board_config) {
+void set_window_size_from_board(SDL_Window* window, int cell_size, int border_thickness, int border_top_size, Sweeppp::BoardConfig board_config) {
     SDL_SetWindowSize(
         window,
         board_config.size_x * cell_size + border_thickness * 2,
-        board_config.size_y * cell_size + border_thickness * 2
+        board_config.size_y * cell_size + border_thickness * 2 + border_top_size
     );
 }
