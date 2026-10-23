@@ -17,7 +17,7 @@ namespace Sweeppp {
         current_board = {};
     }
 
-    void GameManager::generate_current_board(int first_click_index) {
+    void GameManager::generate_current_board(size_t first_click_index) {
         auto start = std::chrono::high_resolution_clock::now();
         current_board.generate_mines(first_click_index);
         current_board.set_cell_adjacent_mine_count();
@@ -52,6 +52,18 @@ namespace Sweeppp {
         return _is_game_over;
     }
 
+    void GameManager::do_game_over(size_t trigger_mine_index) {
+        if (!_is_game_over) std::cout << "\e[0;31mYou revealed a mine, game over!\e[0m" << std::endl;
+
+        current_board.cells[trigger_mine_index].is_trigger_mine = true;
+        _is_game_over = true;
+
+        // Reveal all other mines
+        for (size_t i = 0; i < current_board.mine_indexes.size(); i++) {
+            current_board.reveal_cell(current_board.mine_indexes[i]);
+        }
+    }
+
     void GameManager::handle_mouse_down_event(SDL_Event& event) {
         if (_is_game_over) return;
 
@@ -77,6 +89,14 @@ namespace Sweeppp {
 
             case SDL_BUTTON_MIDDLE: {
                 current_board.chord(cell_index);
+
+                for (size_t adjacent_index : current_board.cells[cell_index].adjacent_cell_indexes) {
+                    if (current_board.cells[adjacent_index].is_mine && current_board.cells[adjacent_index].is_revealed) {
+                        do_game_over(adjacent_index);
+                        break;
+                    }
+                }
+
                 break;
             }
         }
@@ -103,15 +123,7 @@ namespace Sweeppp {
 
         // Clicked a mine, game over
         if (current_board.cells[cell_index].is_mine) {
-            if (!_is_game_over) std::cout << "\e[0;31mYou clicked a mine, game over!\e[0m" << std::endl;
-
-            current_board.cells[cell_index].is_trigger_mine = true;
-            _is_game_over = true;
-
-            // Reveal all other mines
-            for (size_t i = 0; i < current_board.mine_indexes.size(); i++) {
-                current_board.reveal_cell(current_board.mine_indexes[i]);
-            }
+            do_game_over(cell_index);
 
             return;
         }
