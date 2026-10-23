@@ -11,6 +11,10 @@ namespace Sweeppp {
         return texture_size;
     }
 
+    SDL_Texture* TextureAtlas::get_atlas_texture() {
+        return atlas_tex;
+    }
+
     void TextureAtlas::destroy_atlas_texture() {
         SDL_DestroyTexture(atlas_tex);
     }

@@ -20,6 +20,7 @@ namespace Sweeppp {
 
             void initialize_cell_buttons();
             void render_board(SDL_Renderer* renderer, TextureAtlas* atlas, bool is_game_over);
+            void render_border(SDL_Renderer* renderer, TextureAtlas* atlas);
     };
 }
 

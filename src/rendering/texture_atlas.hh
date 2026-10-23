@@ -22,6 +22,7 @@ namespace Sweeppp {
             TextureAtlas(int size, SDL_Renderer* r, std::string atlas_path);
 
             int get_texture_size();
+            SDL_Texture* get_atlas_texture();
 
             /// Renders the texture at `source_coords` in the atlas at the
             /// `destination_rect` rect.

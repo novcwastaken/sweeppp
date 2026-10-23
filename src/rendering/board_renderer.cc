@@ -1,4 +1,5 @@
 #include "board_renderer.hh"
+#include "SDL3/SDL_render.h"
 #include "rendering/texture_atlas.hh"
 #include "rendering/texture_shorthands.hh"
 #include <cmath>
@@ -18,6 +19,31 @@ namespace Sweeppp {
 
             cell_buttons.push_back(cell_button);
         }
+    }
+
+    void BoardRenderer::render_border(SDL_Renderer* renderer, TextureAtlas* atlas) {
+        SDL_FRect border_bottom_src {
+            .x = (float)cell_size * 4,
+            .y = (float)cell_size * 2,
+            .w = (float)cell_size * 2,
+            .h = (float)cell_size * 2
+        };
+
+        SDL_FRect border_bottom_dst {
+            .x = 0,
+            .y = 0,
+            .w = (float)(board->board_config.size_x * cell_size),
+            .h = (float)(board->board_config.size_y * cell_size)
+        };
+
+        SDL_RenderTexture9Grid(
+            renderer,
+            atlas->get_atlas_texture(),
+            &border_bottom_src,
+            8, 8, 8, 8,
+            0,
+            &border_bottom_dst
+        );
     }
 
     void BoardRenderer::render_board(SDL_Renderer* renderer, TextureAtlas* atlas, bool is_game_over) {

@@ -90,10 +90,15 @@ int main(int argc, char* argv[]) {
         }
 
         // Rendering
-        game_manager.board_renderer.render_board(
+        // game_manager.board_renderer.render_board(
+        //     sdl_state.renderer,
+        //     &texture_atlas,
+        //     game_manager.is_game_over()
+        // );
+
+        game_manager.board_renderer.render_border(
             sdl_state.renderer,
-            &texture_atlas,
-            game_manager.is_game_over()
+            &texture_atlas
         );
 
         // Present
